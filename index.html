@@ -1,9 +1,101 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
-        <title>Page Title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
+        <title>Online Courses</title>
     </head>
-    <body>
 
+    <body>
+        <script>
+            let courses = new Vue ({
+                el: "#courses",
+                data: {
+                    courses: [
+                        {
+                            id: 1001,
+                            subject: "Mathematics",
+                            location: "New York",
+                            price: "10",
+                            spaces: "5",
+                            image: ""
+                        },
+                        {
+                            id: 1002,
+                            subject: "Physics",
+                            location: "Los Angeles",
+                            price: "12",
+                            spaces: "5",
+                            image: ""
+                        },
+                        {
+                            id: 1003,
+                            subject: "Chemistry",
+                            location: "Chicago",
+                            price: "15",
+                            spaces: "5",
+                            image: ""
+                        },
+                        {
+                            id: 1004,
+                            subject: "Biology",
+                            location: "Houston",
+                            price: "11",
+                            spaces: "5",
+                            image: ""
+                        },
+                        {
+                            id: 1005,
+                            subject: "English Literature",
+                            location: "San Francisco",
+                            price: "14",
+                            spaces: "5",
+                            image: ""
+                        },
+                        {
+                            id: 1006,
+                            subject: "History",
+                            location: "Miami",
+                            price: "13",
+                            spaces: "5",
+                            image: ""
+                        },
+                        {
+                            id: 1007,
+                            subject: "Computer Science",
+                            location: "Seattle",
+                            price: "20",
+                            spaces: "5",
+                            image: ""
+                        },
+                        {
+                            id: 1008,
+                            subject: "Philosophy",
+                            location: "Boston",
+                            price: "18",
+                            spaces: "5",
+                            image: ""
+                        },
+                        {
+                            id: 1009,
+                            subject: "Economics",
+                            location: "Atlanta",
+                            price: "17",
+                            spaces: "5",
+                            image: ""
+                        },
+                        {
+                            id: 1010,
+                            subject: "Art",
+                            location: "Denver",
+                            price: "10",
+                            spaces: "5",
+                            image: ""
+                        }
+                    ]
+                }
+            })
+        </script>
     </body>
-</html> 
+</html>
