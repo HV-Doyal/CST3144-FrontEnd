@@ -4,12 +4,16 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
+        <link rel="stylesheet" type="text/css" href="styles.css">
         <title>Online Courses</title>
     </head>
 
     <body>
-        <div id="courses">
-            <div v-for="course in courses" :key="course.id" class="course-card">
+        <div class="courses" id="courses">
+            <div class="card" v-for="course in courses" :key="course.id" class="course-card">
+                <figure style="margin-left: 10px;">
+                    <img v-bind:src="course.image" style="width: 175px; height: auto;" alt="image of {{ course.subject }}">
+                </figure>
                 <h2>{{ course.subject }}</h2>
                 <p>Location: {{ course.location }}</p>
                 <p>Price: ${{ course.price }}</p>
