@@ -10,7 +10,7 @@
 
     <body>
         <div class="courses" id="courses">
-            <div class="card" v-for="course in courses" :key="course.id" class="course-card">
+            <div class="card" v-for="course in courses" :key="course.id">
                 <figure style="margin-left: 10px;">
                     <img v-bind:src="course.image" style="width: 175px; height: auto;" alt="image of {{ course.subject }}">
                 </figure>
