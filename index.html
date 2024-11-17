@@ -8,6 +8,14 @@
     </head>
 
     <body>
+        <div id="courses">
+            <div v-for="course in courses" :key="course.id" class="course-card">
+                <h2>{{ course.subject }}</h2>
+                <p>Location: {{ course.location }}</p>
+                <p>Price: ${{ course.price }}</p>
+                <p>Spaces Available: {{ course.spaces }}</p>
+            </div>
+        </div>
         <script>
             let courses = new Vue ({
                 el: "#courses",
