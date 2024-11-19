@@ -23,7 +23,7 @@
                         <input type="radio" v-model="sortBy" value="price"> Price
                     </label><br>
                     <label>
-                        <input type="radio" v-model="sortBy" value="spaces"> Availability
+                        <input type="radio" v-model="sortBy" value="spaces"> Spaces
                     </label>
                 </div>
                 <h3>Order</h3>
@@ -39,7 +39,7 @@
 
             <!-- Display course cards -->
             <div class="courses">
-                <div class="card" v-for="course in sortedCourses" :key="course.id">
+                <div v-for="(course, index) in sortedCourses" :key="course.id" class="card">
                     <figure style="margin-left: 10px;">
                         <img :src="course.image" :alt="'Image of ' + course.subject" style="width: 175px; height: auto;">
                     </figure>
@@ -47,40 +47,69 @@
                     <p>Location: {{ course.location }}</p>
                     <p>Price: £{{ course.price }}</p>
                     <p>Spaces Available: {{ course.spaces }}</p>
-                    <button>Add to cart</button>
+                    <button v-if="course.spaces > 0" v-on:click="addItemToCart(course.id)">Add to cart</button>
+                    <button v-else disabled class="disabled-button">Add to cart</button>
                 </div>
             </div>
         </div>
 
         <script>
-            new Vue({
+            let onlineCourses = new Vue({
                 el: "#courses",
                 data: {
-                    sortBy: 'price',
-                    order: 'asc',
+                    sortBy: 'subject',  // This holds the criterion for sorting (subject, location, price, spaces)
+                    order: 'asc',  // This holds the sorting order (asc, desc)
                     courses: [
-                        { id: 1001, subject: "Mathematics", location: "New York", price: "10", spaces: "5", image: "Assets/Mathematics.png" },
-                        { id: 1002, subject: "Physics", location: "Los Angeles", price: "12", spaces: "5", image: "Assets/physics.png" },
-                        { id: 1003, subject: "Chemistry", location: "Chicago", price: "15", spaces: "5", image: "Assets/chemistry.png" },
-                        { id: 1004, subject: "Biology", location: "Houston", price: "11", spaces: "5", image: "Assets/biology.png" },
-                        { id: 1005, subject: "English Literature", location: "San Francisco", price: "14", spaces: "5", image: "Assets/Literature.png" },
-                        { id: 1006, subject: "History", location: "Miami", price: "13", spaces: "5", image: "Assets/history.png" },
-                        { id: 1007, subject: "Computer Science", location: "Seattle", price: "20", spaces: "5", image: "Assets/computer science.png" },
-                        { id: 1008, subject: "Philosophy", location: "Boston", price: "18", spaces: "5", image: "Assets/philosophy.png" },
-                        { id: 1009, subject: "Economics", location: "Atlanta", price: "17", spaces: "5", image: "Assets/economics.png" },
-                        { id: 1010, subject: "Art", location: "Denver", price: "10", spaces: "5", image: "Assets/arts.png" }
-                    ]
+                        { id: 1001, subject: "Mathematics", location: "New York", price: 10, spaces: 5, image: "Assets/Mathematics.png" },
+                        { id: 1002, subject: "Physics", location: "Los Angeles", price: 12, spaces: 5, image: "Assets/physics.png" },
+                        { id: 1003, subject: "Chemistry", location: "Chicago", price: 15, spaces: 5, image: "Assets/chemistry.png" },
+                        { id: 1004, subject: "Biology", location: "Houston", price: 11, spaces: 5, image: "Assets/biology.png" },
+                        { id: 1005, subject: "English Literature", location: "San Francisco", price: 14, spaces: 5, image: "Assets/Literature.png" },
+                        { id: 1006, subject: "History", location: "Miami", price: 13, spaces: 5, image: "Assets/history.png" },
+                        { id: 1007, subject: "Computer Science", location: "Seattle", price: 20, spaces: 5, image: "Assets/computer science.png" },
+                        { id: 1008, subject: "Philosophy", location: "Boston", price: 18, spaces: 5, image: "Assets/philosophy.png" },
+                        { id: 1009, subject: "Economics", location: "Atlanta", price: 17, spaces: 5, image: "Assets/economics.png" },
+                        { id: 1010, subject: "Art", location: "Denver", price: 10, spaces: 5, image: "Assets/arts.png" }
+                    ],
+                    cart: []
+                },
+                methods: {
+                    addItemToCart(courseId) {
+                        // Find the course by its ID
+                        let course = this.courses.find(c => c.id === courseId);
+                        if (course && course.spaces > 0) {
+                            this.cart.push(course.id);  // Add the course to the cart
+                            course.spaces--;  // Decrease available spaces
+                        }
+                    }
                 },
                 computed: {
                     sortedCourses() {
+                        // If no sorting criterion is selected, just return the courses as is
+                        if (!this.sortBy) {
+                            return this.courses;
+                        }
+
                         return this.courses.slice().sort((a, b) => {
-                            let compareValue;
-                            if (this.sortBy === 'price' || this.sortBy === 'spaces') {
-                                compareValue = Number(a[this.sortBy]) - Number(b[this.sortBy]);
-                            } else {
-                                compareValue = a[this.sortBy].localeCompare(b[this.sortBy]);
+                            let comparison = 0;
+
+                            // Compare based on the selected sortBy criterion
+                            if (this.sortBy === 'subject') {
+                                comparison = a.subject.localeCompare(b.subject);
+                            } else if (this.sortBy === 'location') {
+                                comparison = a.location.localeCompare(b.location);
+                            } else if (this.sortBy === 'price') {
+                                comparison = a.price - b.price;
+                            } else if (this.sortBy === 'spaces') {
+                                comparison = a.spaces - b.spaces;
                             }
-                            return this.order === 'asc' ? compareValue : -compareValue;
+
+                            // If descending order is selected, reverse the comparison
+                            if (this.order === 'desc') {
+                                comparison = -comparison;
+                            }
+
+                            return comparison;
                         });
                     }
                 }

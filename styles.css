@@ -75,3 +75,7 @@ body {
     background-color: #76ff03;
     color: #000;
 }
+button:disabled {
+    background-color: grey;
+    color: white;
+}
