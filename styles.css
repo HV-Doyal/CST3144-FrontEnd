@@ -2,7 +2,10 @@ body {
     font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
+    background-color: #121212;
+    color: #777575;
     padding: 20px;
+    margin: 0;
 }
 
 .container {
@@ -12,6 +15,14 @@ body {
 
 .sort-options {
     width: 200px;
+    background-color: #1f1f1f;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.sort-options h3 {
+    color: #777575;
 }
 
 .sort-options input {
@@ -25,30 +36,42 @@ body {
 }
 
 .card {
-    border: 1px solid #ccc;
+    border: 1px solid #444;
     border-radius: 8px;
     padding: 10px;
     width: 200px;
-    box-shadow: 2px 2px 12px rgba(0,0,0,0.1);
+    box-shadow: 2px 2px 12px rgba(0,0,0,0.5);
+    background-color: #1f1f1f;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 10px;
 }
 
 .card img {
-    width: 40px;
-    height: 40px;
+    width: 175px;
+    height: 175px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.card h2, .card p {
+    color: #777575;
+    margin: 0;
+    padding: 5px 0;
 }
 
 .card button {
-    background-color: #007bff;
-    color: white;
+    background-color: #4caf50;
+    color: #121212;
     border: none;
     padding: 8px;
     border-radius: 5px;
     cursor: pointer;
+    margin-top: auto;
 }
 
 .card button:hover {
-    background-color: #0056b3;
+    background-color: #76ff03;
+    color: #000;
 }

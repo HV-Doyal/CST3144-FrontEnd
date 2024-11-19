@@ -4,143 +4,84 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
-        <link rel="stylesheet" type="text/css" href="styles.css">
+        <link rel="stylesheet" href="styles.css">
         <title>Online Courses</title>
     </head>
-
     <body>
-        <div class="courses" id="courses">
-            <!-- Sorting lessons -->
+        <div id="courses" class="container">
+            <!-- Sorting options -->
             <div class="sort-options">
                 <h3>Sort by</h3>
                 <div>
-                    <label><input type="radio" v-model="sortBy" value="subject">Subject</label><br>
-                    <label><input type="radio" v-model="sortBy" value="location">Location</label><br>
-                    <label><input type="radio" v-model="sortBy" value="price">Price</label><br>
-                    <label><input type="radio" v-model="sortBy" value="spaces">Availability</label>
+                    <label>
+                        <input type="radio" v-model="sortBy" value="subject"> Subject
+                    </label><br>
+                    <label>
+                        <input type="radio" v-model="sortBy" value="location"> Location
+                    </label><br>
+                    <label>
+                        <input type="radio" v-model="sortBy" value="price"> Price
+                    </label><br>
+                    <label>
+                        <input type="radio" v-model="sortBy" value="spaces"> Availability
+                    </label>
                 </div>
                 <h3>Order</h3>
                 <div>
-                    <label><input type="radio" v-model="order" value="asc">Ascending</label><br>
-                    <label><input type="radio" v-model="order" value="desc">Descending</label>
+                    <label>
+                        <input type="radio" v-model="order" value="asc"> Ascending
+                    </label><br>
+                    <label>
+                        <input type="radio" v-model="order" value="desc"> Descending
+                    </label>
                 </div>
             </div>
-            <!-- Display Card for each lesson -->
-            <div class="card" v-for="course in sortedCourses" :key="course.id">
-                <figure style="margin-left: 10px;">
-                    <img v-bind:src="course.image" style="width: 175px; height: auto;" alt="image of {{ course.subject }}">
-                </figure>
-                <h2>{{ course.subject }}</h2>
-                <p>Location: {{ course.location }}</p>
-                <p>Price: £{{ course.price }}</p>
-                <p>Spaces Available: {{ course.spaces }}</p>
-                <button>Add to cart</button>
+
+            <!-- Display course cards -->
+            <div class="courses">
+                <div class="card" v-for="course in sortedCourses" :key="course.id">
+                    <figure style="margin-left: 10px;">
+                        <img :src="course.image" :alt="'Image of ' + course.subject" style="width: 175px; height: auto;">
+                    </figure>
+                    <h2>{{ course.subject }}</h2>
+                    <p>Location: {{ course.location }}</p>
+                    <p>Price: £{{ course.price }}</p>
+                    <p>Spaces Available: {{ course.spaces }}</p>
+                    <button>Add to cart</button>
+                </div>
             </div>
         </div>
 
         <script>
-            let courses = new Vue({
+            new Vue({
                 el: "#courses",
                 data: {
                     sortBy: 'price',
                     order: 'asc',
                     courses: [
-                        {
-                            id: 1001,
-                            subject: "Mathematics",
-                            location: "New York",
-                            price: "10",
-                            spaces: "5",
-                            image: "Assets/Mathematics.png"
-                        },
-                        {
-                            id: 1002,
-                            subject: "Physics",
-                            location: "Los Angeles",
-                            price: "12",
-                            spaces: "5",
-                            image: "Assets/physics.png"
-                        },
-                        {
-                            id: 1003,
-                            subject: "Chemistry",
-                            location: "Chicago",
-                            price: "15",
-                            spaces: "5",
-                            image: "Assets/chemistry.png"
-                        },
-                        {
-                            id: 1004,
-                            subject: "Biology",
-                            location: "Houston",
-                            price: "11",
-                            spaces: "5",
-                            image: "Assets/biology.png"
-                        },
-                        {
-                            id: 1005,
-                            subject: "English Literature",
-                            location: "San Francisco",
-                            price: "14",
-                            spaces: "5",
-                            image: "Assets/Literature.png"
-                        },
-                        {
-                            id: 1006,
-                            subject: "History",
-                            location: "Miami",
-                            price: "13",
-                            spaces: "5",
-                            image: "Assets/history.png"
-                        },
-                        {
-                            id: 1007,
-                            subject: "Computer Science",
-                            location: "Seattle",
-                            price: "20",
-                            spaces: "5",
-                            image: "Assets/computer science.png"
-                        },
-                        {
-                            id: 1008,
-                            subject: "Philosophy",
-                            location: "Boston",
-                            price: "18",
-                            spaces: "5",
-                            image: "Assets/philosophy.png"
-                        },
-                        {
-                            id: 1009,
-                            subject: "Economics",
-                            location: "Atlanta",
-                            price: "17",
-                            spaces: "5",
-                            image: "Assets/economics.png"
-                        },
-                        {
-                            id: 1010,
-                            subject: "Art",
-                            location: "Denver",
-                            price: "10",
-                            spaces: "5",
-                            image: "Assets/arts.png"
-                        }
-                    ],
+                        { id: 1001, subject: "Mathematics", location: "New York", price: "10", spaces: "5", image: "Assets/Mathematics.png" },
+                        { id: 1002, subject: "Physics", location: "Los Angeles", price: "12", spaces: "5", image: "Assets/physics.png" },
+                        { id: 1003, subject: "Chemistry", location: "Chicago", price: "15", spaces: "5", image: "Assets/chemistry.png" },
+                        { id: 1004, subject: "Biology", location: "Houston", price: "11", spaces: "5", image: "Assets/biology.png" },
+                        { id: 1005, subject: "English Literature", location: "San Francisco", price: "14", spaces: "5", image: "Assets/Literature.png" },
+                        { id: 1006, subject: "History", location: "Miami", price: "13", spaces: "5", image: "Assets/history.png" },
+                        { id: 1007, subject: "Computer Science", location: "Seattle", price: "20", spaces: "5", image: "Assets/computer science.png" },
+                        { id: 1008, subject: "Philosophy", location: "Boston", price: "18", spaces: "5", image: "Assets/philosophy.png" },
+                        { id: 1009, subject: "Economics", location: "Atlanta", price: "17", spaces: "5", image: "Assets/economics.png" },
+                        { id: 1010, subject: "Art", location: "Denver", price: "10", spaces: "5", image: "Assets/arts.png" }
+                    ]
                 },
                 computed: {
                     sortedCourses() {
-                        let sorted = this.courses.slice().sort((a, b) => {
-                            if (this.sortBy === 'price') {
-                                return this.order === 'asc' ? Number(a.price) - Number(b.price) : Number(b.price) - Number(a.price);
-                            } else if (this.sortBy === 'subject') {
-                                return this.order === 'asc' ? a.subject.localeCompare(b.subject) : b.subject.localeCompare(a.subject);
-                            } else if (this.sortBy === 'location') {
-                                return this.order === 'asc' ? a.location.localeCompare(b.location) : b.location.localeCompare(a.location);
-                            } else if (this.sortBy === 'spaces') {
-                                return this.order === 'asc' ? Number(a.spaces) - Number(b.spaces) : Number(b.spaces) - Number(a.spaces);
+                        return this.courses.slice().sort((a, b) => {
+                            let compareValue;
+                            if (this.sortBy === 'price' || this.sortBy === 'spaces') {
+                                compareValue = Number(a[this.sortBy]) - Number(b[this.sortBy]);
+                            } else {
+                                compareValue = a[this.sortBy].localeCompare(b[this.sortBy]);
                             }
+                            return this.order === 'asc' ? compareValue : -compareValue;
                         });
-                        return sorted;
                     }
                 }
             });
