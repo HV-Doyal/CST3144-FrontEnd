@@ -71,7 +71,7 @@ body {
     margin-top: auto;
 }
 
-.card button:hover, .checkoutButton button:hover  {
+.card button:hover, .cartButton button:hover  {
     background-color: #76ff03;
     color: #000;
 }

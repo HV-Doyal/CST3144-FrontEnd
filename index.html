@@ -12,7 +12,7 @@
         <div id="courses" class="container">
             <div class="sidebar">
                 <!-- Sorting options -->
-                <div>
+                <div v-if="view === 'courses'">
                     <h3>Sort by</h3>
                     <div>
                         <label>
@@ -53,19 +53,32 @@
                     </button>
                 </div>
             </div>
-            <!-- Display course cards -->
-            <div class="courses">
-                <div v-for="(course, index) in sortedCourses" :key="course.id" class="card">
-                    <figure style="margin-left: 10px;">
-                        <img :src="course.image" :alt="'Image of ' + course.subject" style="width: 175px; height: auto;">
-                    </figure>
-                    <h2>{{ course.subject }}</h2>
-                    <p>Location: {{ course.location }}</p>
-                    <p>Price: £{{ course.price }}</p>
-                    <p>Spaces Available: {{ course.spaces }}</p>
-                    <button v-if="course.spaces > 0" v-on:click="addItemToCart(course.id)">Add to cart</button>
-                    <button v-else disabled class="disabled-button">Add to cart</button>
+            <!-- Courses Page -->
+            <div v-if="view === 'courses'">
+                <!-- Display course cards -->
+                <div class="courses">
+                    <div v-for="course in sortedCourses" :key="course.id" class="card">
+                        <figure style="margin-left: 10px;">
+                            <img :src="course.image" :alt="'Image of ' + course.subject" style="width: 175px; height: auto;">
+                        </figure>
+                        <h2>{{ course.subject }}</h2>
+                        <p>Location: {{ course.location }}</p>
+                        <p>Price: £{{ course.price }}</p>
+                        <p>Spaces Available: {{ course.spaces }}</p>
+                        <button v-if="course.spaces > 0" v-on:click="addItemToCart(course.id)">Add to cart</button>
+                        <button v-else disabled class="disabled-button">Add to cart</button>
+                    </div>
                 </div>
+            </div>
+            <!-- Cart page -->
+            <div v-else class="cart">
+                <h2>Your Cart</h2>
+                <ul>
+                    <li v-for="id in cart" :key="id">
+                        {{ getCourseById(id).subject }} - £{{ getCourseById(id).price }}
+                    </li>
+                </ul>
+                <p v-if="cart.length === 0">Your cart is empty.</p>
             </div>
         </div>
 
@@ -73,6 +86,7 @@
             let onlineCourses = new Vue({
                 el: "#courses",
                 data: {
+                    view: 'courses', //This holds whether the view is the courses page or cart page
                     sortBy: 'subject',  // This holds the criterion for sorting (subject, location, price, spaces)
                     order: 'asc',  // This holds the sorting order (asc, desc)
                     courses: [
@@ -99,7 +113,10 @@
                         }
                     },
                     openCartPage() {
-                        window.location.href = 'https://www.google.com';
+                        this.view = this.view === 'courses' ? 'cart' : 'courses';
+                    },
+                    getCourseById(id) {
+                        return this.courses.find(course => course.id === id);
                     }
                 },
                 computed: {
