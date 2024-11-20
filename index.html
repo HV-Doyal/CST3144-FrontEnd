@@ -40,13 +40,18 @@
                 </div>
                 <!-- Cart button -->
                 <div class="cartButton">
-                    <!-- Enabled button when itemInCart >= 1 -->
-                    <button v-if="itemInCart > 0" v-on:click="openCartPage">
+                    <!-- Button for courses page -->
+                    <button v-if="view === 'courses' && itemInCart > 0" v-on:click="openCartPage">
                         {{ itemInCart }}
                         <span class="fa-solid fa-cart-plus"></span>
                         Cart
                     </button>
-                    <!-- Disabled button when itemInCart < 1 -->
+                    <!-- Button for cart page (always enabled) -->
+                    <button v-else-if="view !== 'courses'" v-on:click="openCartPage">
+                        <span class="fa-solid fa-cart-plus"></span>
+                        Cart
+                    </button>
+                    <!-- Disabled button for courses page when itemInCart <= 0 -->
                     <button v-else disabled>
                         <span class="fa-solid fa-cart-plus"></span>
                         Cart
@@ -76,6 +81,8 @@
                 <ul>
                     <li v-for="id in cart" :key="id">
                         {{ getCourseById(id).subject }} - £{{ getCourseById(id).price }}
+                        <!-- Remove button -->
+                        <button v-on:click="removeItemFromCart(id)">Remove</button>
                     </li>
                 </ul>
                 <p v-if="cart.length === 0">Your cart is empty.</p>
@@ -117,7 +124,17 @@
                     },
                     getCourseById(id) {
                         return this.courses.find(course => course.id === id);
-                    }
+                    },
+                    removeItemFromCart(courseId) {
+                        // Find the course by its ID
+                        let course = this.courses.find(c => c.id === courseId);
+                        // Check if the course is in the cart
+                        let courseIndexInCart = this.cart.indexOf(courseId);
+                        if (course && courseIndexInCart !== -1) {
+                            this.cart.splice(courseIndexInCart, 1);  // Remove the course from the cart
+                            course.spaces++;  // Increase available spaces
+                        }
+                    },
                 },
                 computed: {
                     sortedCourses() {
