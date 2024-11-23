@@ -86,6 +86,45 @@
                     </li>
                 </ul>
                 <p v-if="cart.length === 0">Your cart is empty.</p>
+                <!-- Checkout part of page -->
+                <div>
+                    <h2>Checkout</h2>
+                    <form @submit.prevent="submitOrder">
+                        <div>
+                            <label>First Name:</label>
+                            <input type="text" v-model="firstName" placeholder="Enter First Name">
+                        </div>
+
+                        <div>
+                            <label>Last Name:</label>
+                            <input type="text" v-model="lastName" placeholder="Enter Last Name">
+                        </div>
+
+                        <div>
+                            <label>Address:</label>
+                            <input type="text" v-model="address" placeholder="Enter Address">
+                        </div>
+
+                        <div>
+                            <label>Phone Number:</label>
+                            <input type="number" v-model="phoneNumber" placeholder="Enter Phone Number">
+                        </div>
+
+                        <div>
+                            <label>Email Address:</label>
+                            <input type="text" v-model="email" placeholder="Enter Email Address">
+                        </div>
+                    </form>
+
+                    <h2>Order Information</h2>
+                    <p><strong>First Name:</strong> {{ firstName }}</p>
+                    <p><strong>Last Name:</strong> {{ lastName }}</p>
+                    <p><strong>Address:</strong> {{ address }}</p>
+                    <p><strong>Phone Number:</strong> {{ phoneNumber }}</p>
+                    <p><strong>Email Address:</strong> {{ email }}</p>
+
+                    <button type="button" :disabled="!isFormValid" @click="submitOrder">Checkout</button>
+                </div>
             </div>
         </div>
 
@@ -108,7 +147,12 @@
                         { id: 1009, subject: "Economics", location: "Atlanta", price: 17, spaces: 5, image: "Assets/economics.png" },
                         { id: 1010, subject: "Art", location: "Denver", price: 10, spaces: 5, image: "Assets/arts.png" }
                     ],
-                    cart: []
+                    cart: [],
+                    firstName: '',
+                    lastName: '',
+                    address: '',
+                    phoneNumber: '',
+                    email:''
                 },
                 methods: {
                     addItemToCart(courseId) {
@@ -135,38 +179,57 @@
                             course.spaces++;  // Increase available spaces
                         }
                     },
+                    submitOrder() {
+                        if (this.isFormValid) {
+                            alert('Order submitted!');
+                        } else {
+                            alert('Please fill in valid Name and Phone Number.');
+                        }
+                    }
                 },
                 computed: {
                     sortedCourses() {
-                        // If no sorting criterion is selected, just return the courses as is
-                        if (!this.sortBy) {
-                            return this.courses;
+                        // If no sorting criteria is selected, return the courses as they are
+                        if (!this.sortBy ) {
+                            return this.courses ;
                         }
 
-                        return this.courses.slice().sort((a, b) => {
-                            let comparison = 0;
+                        // Create a sorted copy of the courses
+                        return this.courses .slice().sort((courseA, courseB) => {
+                            let comparisonResult = 0;
 
-                            // Compare based on the selected sortBy criterion
-                            if (this.sortBy === 'subject') {
-                                comparison = a.subject.localeCompare(b.subject);
-                            } else if (this.sortBy === 'location') {
-                                comparison = a.location.localeCompare(b.location);
-                            } else if (this.sortBy === 'price') {
-                                comparison = a.price - b.price;
-                            } else if (this.sortBy === 'spaces') {
-                                comparison = a.spaces - b.spaces;
+                            // Compare based on the selected sorting criteria
+                            if (this.sortBy  === 'subject') {
+                                comparisonResult = courseA.subject.localeCompare(courseB.subject);
+                            } else if (this.sortBy  === 'location') {
+                                comparisonResult = courseA.location.localeCompare(courseB.location);
+                            } else if (this.sortBy  === 'price') {
+                                comparisonResult = courseA.price - courseB.price;
+                            } else if (this.sortBy  === 'spaces') {
+                                comparisonResult = courseA.spaces - courseB.spaces;
                             }
 
-                            // If descending order is selected, reverse the comparison
-                            if (this.order === 'desc') {
-                                comparison = -comparison;
+                            // Reverse the comparison result for descending order
+                            if (this.order  === 'desc') {
+                                comparisonResult = -comparisonResult;
                             }
 
-                            return comparison;
+                            return comparisonResult;
                         });
                     },
                     itemInCart() {
                         return this.cart.length || "";
+                    },
+                    isFormValid() {
+                        const nameRegex = /^[a-zA-Z]+$/; // Only letters allowed
+                        const phoneRegex = /^[0-9]+$/;  // Only numbers allowed
+
+                        const isFirstNameValid = nameRegex.test(this.firstName);
+                        const isLastNameValid = nameRegex.test(this.lastName);
+                        const isPhoneValid = phoneRegex.test(this.phoneNumber);
+                        const isCartEmpty = this.cart.length === 0;;
+
+                        return  !isCartEmpty && isFirstNameValid && isLastNameValid && isPhoneValid && this.address.trim() !== '';
                     }
                 }
             });
