@@ -168,7 +168,7 @@
                         let course = this.courses.find(c => c.id === courseId);
                         if (course && course.spaces > 0) {
                             this.cart.push(course.id);
-                            course.spaces--;
+                            course.spaces--;  // Decrease the space by 1 in Vue frontend
                         }
                     },
                     openCartPage() {
@@ -206,12 +206,18 @@
                                 headers: {
                                     'Content-Type': 'application/json'
                                 },
-                                body: JSON.stringify(orderData) // Convert the orderData to JSON
+                                body: JSON.stringify(orderData) // Send the updated order data to the server
                             })
                                 .then(response => response.json())
                                 .then(data => {
                                     if (data.message === 'Order created successfully') {
                                         alert(`Order submitted successfully! Order ID: ${data.orderId}`);
+
+                                        // After submitting the order, update the course spaces in the backend
+                                        this.cartSummary.forEach(lesson => {
+                                            this.updateCourseSpaces(lesson.lessonID, lesson.spaces); // Update the DB with the reduced spaces
+                                        });
+
                                         // Optionally, clear the cart and reset form fields
                                         this.cart = [];
                                         this.firstName = '';
@@ -229,6 +235,36 @@
                                 });
                         } else {
                             alert('Please fill in valid Name and Phone Number.');
+                        }
+                    },
+                    updateCourseSpaces(courseId, spaces) {
+                        const course = this.courses.find(c => c.id === courseId);
+
+                        if (course) {
+                            console.log(`Updating course ${courseId} to have ${course.spaces} spaces.`);
+
+                            const updatedData = {
+                                spaces: course.spaces
+                            };
+
+                            fetch(`http://localhost:3000/updateCourse/${courseId}`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify(updatedData), // Send the updated spaces data to the backend
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.message === 'Course updated successfully') {
+                                        console.log(`Course ${courseId} updated successfully.`);
+                                    } else {
+                                        console.error('Failed to update course spaces:', data.error);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error updating course spaces:', error);
+                                });
                         }
                     }
                 },
