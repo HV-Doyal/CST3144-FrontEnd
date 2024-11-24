@@ -163,7 +163,7 @@
                 },
                 methods: {
                     fetchCourses() {
-                        fetch('http://localhost:3000/getCourses')
+                        fetch('https://cst3144-backend-68xi.onrender.com/getCourses')
                             .then(response => response.json())
                             .then(data => {
                                 this.courses = data;
@@ -174,7 +174,7 @@
                             });
                     },
                     getImageUrl(courseId) {
-                        return `http://localhost:3000/getCourseImage/${courseId}`;
+                        return `https://cst3144-backend-68xi.onrender.com/getCourseImage/${courseId}`;
                     },
                     addItemToCart(courseId) {
                         let course = this.courses.find(c => c.id === courseId);
@@ -213,7 +213,7 @@
                             };
 
                             // Send the order data to the server
-                            fetch('http://localhost:3000/saveOrder', {
+                            fetch('https://cst3144-backend-68xi.onrender.com/saveOrder', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'
@@ -259,7 +259,7 @@
                                 spaces: course.spaces
                             };
 
-                            fetch(`http://localhost:3000/updateCourse/${courseId}`, {
+                            fetch(`https://cst3144-backend-68xi.onrender.com/updateCourse/${courseId}`, {
                                 method: 'PUT',
                                 headers: {
                                     'Content-Type': 'application/json',
@@ -281,7 +281,7 @@
                     },
                     fetchFilteredCourses() {
                         if (this.searchQuery.length > 0) {
-                            fetch(`http://localhost:3000/search?query=${this.searchQuery}`)
+                            fetch(`https://cst3144-backend-68xi.onrender.com/search?query=${this.searchQuery}`)
                                 .then(response => response.json())
                                 .then(data => {
                                     this.filteredCourses = data;
