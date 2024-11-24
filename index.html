@@ -64,7 +64,7 @@
                 <div class="courses">
                     <div v-for="course in sortedCourses" :key="course.id" class="card">
                         <figure style="margin-left: 10px;">
-                            <img :src="course.image" :alt="'Image of ' + course.topic" style="width: 175px; height: auto;">
+                            <img :src="course.image ? getImageUrl(course.id) : 'path/to/default-image.jpg'" :alt="'Image of ' + course.topic" style="width: 175px; height: auto;">
                         </figure>
                         <h2>{{ course.topic }}</h2>
                         <p>Location: {{ course.location }}</p>
@@ -152,22 +152,17 @@
                 methods: {
                     fetchCourses() {
                         fetch('http://localhost:3000/getCourses')
-                            .then(response => {
-                                console.log('Response status:', response.status);
-                                if (response.ok) {
-                                    return response.json();
-                                } else {
-                                    throw new Error('Failed to fetch courses');
-                                }
-                            })
+                            .then(response => response.json())
                             .then(data => {
-                                console.log('Fetched data:', data);
                                 this.courses = data;
                             })
                             .catch(error => {
                                 console.error('Error fetching courses:', error);
                                 alert('There was an issue fetching course data.');
                             });
+                    },
+                    getImageUrl(courseId) {
+                        return `http://localhost:3000/getCourseImage/${courseId}`;
                     },
                     addItemToCart(courseId) {
                         let course = this.courses.find(c => c.id === courseId);
