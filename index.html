@@ -122,6 +122,11 @@
                     <p><strong>Address:</strong> {{ address }}</p>
                     <p><strong>Phone Number:</strong> {{ phoneNumber }}</p>
                     <p><strong>Email Address:</strong> {{ email }}</p>
+                    <ul>
+                        <li v-for="lesson in cartSummary" :key="lesson.lessonID">
+                            Lesson ID: {{ lesson.lessonID }}, Spaces: {{ lesson.spaces }}
+                        </li>
+                    </ul>
 
                     <button type="button" :disabled="!isFormValid" @click="submitOrder">Checkout</button>
                 </div>
@@ -230,6 +235,18 @@
                         const isCartEmpty = this.cart.length === 0;;
 
                         return  !isCartEmpty && isFirstNameValid && isLastNameValid && isPhoneValid && this.address.trim() !== '';
+                    },
+                    cartSummary() {
+                        let summary = [];
+                        this.cart.forEach(id => {
+                            let existingItem = summary.find(item => item.lessonID === id);
+                            if (existingItem) {
+                                existingItem.spaces++;
+                            } else {
+                                summary.push({ lessonID: id, spaces: 1 });
+                            }
+                        });
+                        return summary;
                     }
                 }
             });
