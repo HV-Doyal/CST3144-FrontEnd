@@ -137,35 +137,42 @@
             let onlineCourses = new Vue({
                 el: "#courses",
                 data: {
-                    view: 'courses', //This holds whether the view is the courses page or cart page
-                    sortBy: 'subject',  // This holds the criterion for sorting (subject, location, price, spaces)
-                    order: 'asc',  // This holds the sorting order (asc, desc)
-                    courses: [
-                        { id: 1001, subject: "Mathematics", location: "New York", price: 10, spaces: 5, image: "Assets/Mathematics.png" },
-                        { id: 1002, subject: "Physics", location: "Los Angeles", price: 12, spaces: 5, image: "Assets/physics.png" },
-                        { id: 1003, subject: "Chemistry", location: "Chicago", price: 15, spaces: 5, image: "Assets/chemistry.png" },
-                        { id: 1004, subject: "Biology", location: "Houston", price: 11, spaces: 5, image: "Assets/biology.png" },
-                        { id: 1005, subject: "English Literature", location: "San Francisco", price: 14, spaces: 5, image: "Assets/Literature.png" },
-                        { id: 1006, subject: "History", location: "Miami", price: 13, spaces: 5, image: "Assets/history.png" },
-                        { id: 1007, subject: "Computer Science", location: "Seattle", price: 20, spaces: 5, image: "Assets/computer science.png" },
-                        { id: 1008, subject: "Philosophy", location: "Boston", price: 18, spaces: 5, image: "Assets/philosophy.png" },
-                        { id: 1009, subject: "Economics", location: "Atlanta", price: 17, spaces: 5, image: "Assets/economics.png" },
-                        { id: 1010, subject: "Art", location: "Denver", price: 10, spaces: 5, image: "Assets/arts.png" }
-                    ],
+                    view: 'courses',
+                    sortBy: 'subject',
+                    order: 'asc',
+                    courses: [], // Initially empty, will be populated from backend
                     cart: [],
                     firstName: '',
                     lastName: '',
                     address: '',
                     phoneNumber: '',
-                    email:''
+                    email: ''
                 },
                 methods: {
+                    fetchCourses() {
+                        fetch('http://localhost:3000/getCourses')
+                            .then(response => {
+                                console.log('Response status:', response.status);
+                                if (response.ok) {
+                                    return response.json();
+                                } else {
+                                    throw new Error('Failed to fetch courses');
+                                }
+                            })
+                            .then(data => {
+                                console.log('Fetched data:', data);
+                                this.courses = data;
+                            })
+                            .catch(error => {
+                                console.error('Error fetching courses:', error);
+                                alert('There was an issue fetching course data.');
+                            });
+                    },
                     addItemToCart(courseId) {
-                        // Find the course by its ID
                         let course = this.courses.find(c => c.id === courseId);
                         if (course && course.spaces > 0) {
-                            this.cart.push(course.id);  // Add the course to the cart
-                            course.spaces--;  // Decrease available spaces
+                            this.cart.push(course.id);
+                            course.spaces--;
                         }
                     },
                     openCartPage() {
@@ -175,13 +182,11 @@
                         return this.courses.find(course => course.id === id);
                     },
                     removeItemFromCart(courseId) {
-                        // Find the course by its ID
                         let course = this.courses.find(c => c.id === courseId);
-                        // Check if the course is in the cart
                         let courseIndexInCart = this.cart.indexOf(courseId);
                         if (course && courseIndexInCart !== -1) {
-                            this.cart.splice(courseIndexInCart, 1);  // Remove the course from the cart
-                            course.spaces++;  // Increase available spaces
+                            this.cart.splice(courseIndexInCart, 1);
+                            course.spaces++;
                         }
                     },
                     submitOrder() {
@@ -194,47 +199,40 @@
                 },
                 computed: {
                     sortedCourses() {
-                        // If no sorting criteria is selected, return the courses as they are
-                        if (!this.sortBy ) {
-                            return this.courses ;
-                        }
+                        if (!this.sortBy) return this.courses;
 
-                        // Create a sorted copy of the courses
-                        return this.courses .slice().sort((courseA, courseB) => {
+                        // Ensure that courses are valid before sorting
+                        return this.courses.slice().sort((courseA, courseB) => {
                             let comparisonResult = 0;
 
-                            // Compare based on the selected sorting criteria
-                            if (this.sortBy  === 'subject') {
-                                comparisonResult = courseA.subject.localeCompare(courseB.subject);
-                            } else if (this.sortBy  === 'location') {
-                                comparisonResult = courseA.location.localeCompare(courseB.location);
-                            } else if (this.sortBy  === 'price') {
-                                comparisonResult = courseA.price - courseB.price;
-                            } else if (this.sortBy  === 'spaces') {
-                                comparisonResult = courseA.spaces - courseB.spaces;
+                            // Ensure courseA and courseB have the required properties
+                            if (courseA && courseB) {
+                                if (this.sortBy === 'subject') {
+                                    // Check if the 'subject' property is valid
+                                    comparisonResult = courseA.subject ? courseA.subject.localeCompare(courseB.subject) : 0;
+                                } else if (this.sortBy === 'location') {
+                                    comparisonResult = courseA.location ? courseA.location.localeCompare(courseB.location) : 0;
+                                } else if (this.sortBy === 'price') {
+                                    comparisonResult = courseA.price ? courseA.price - courseB.price : 0;
+                                } else if (this.sortBy === 'spaces') {
+                                    comparisonResult = courseA.spaces ? courseA.spaces - courseB.spaces : 0;
+                                }
                             }
 
-                            // Reverse the comparison result for descending order
-                            if (this.order  === 'desc') {
-                                comparisonResult = -comparisonResult;
-                            }
-
-                            return comparisonResult;
+                            return this.order === 'desc' ? -comparisonResult : comparisonResult;
                         });
                     },
                     itemInCart() {
                         return this.cart.length || "";
                     },
                     isFormValid() {
-                        const nameRegex = /^[a-zA-Z]+$/; // Only letters allowed
-                        const phoneRegex = /^[0-9]+$/;  // Only numbers allowed
-
+                        const nameRegex = /^[a-zA-Z]+$/;
+                        const phoneRegex = /^[0-9]+$/;
                         const isFirstNameValid = nameRegex.test(this.firstName);
                         const isLastNameValid = nameRegex.test(this.lastName);
                         const isPhoneValid = phoneRegex.test(this.phoneNumber);
-                        const isCartEmpty = this.cart.length === 0;;
-
-                        return  !isCartEmpty && isFirstNameValid && isLastNameValid && isPhoneValid && this.address.trim() !== '';
+                        const isCartEmpty = this.cart.length === 0;
+                        return !isCartEmpty && isFirstNameValid && isLastNameValid && isPhoneValid && this.address.trim() !== '';
                     },
                     cartSummary() {
                         let summary = [];
@@ -248,6 +246,9 @@
                         });
                         return summary;
                     }
+                },
+                created() {
+                    this.fetchCourses(); // Fetch courses when the component is created
                 }
             });
         </script>
