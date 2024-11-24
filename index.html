@@ -11,6 +11,16 @@
     <body>
         <div id="courses" class="container">
             <div class="sidebar">
+                <!--Search Input Field -->
+                <div v-if="view === 'courses'">
+                    <input
+                            type="text"
+                            v-model="searchQuery"
+                            @input="fetchFilteredCourses"
+                            placeholder="Search for a course..."
+                            class="search-input"
+                    />
+                </div>
                 <!-- Sorting options -->
                 <div v-if="view === 'courses'">
                     <h3>Sort by</h3>
@@ -62,7 +72,7 @@
             <div v-if="view === 'courses'">
                 <!-- Display course cards -->
                 <div class="courses">
-                    <div v-for="course in sortedCourses" :key="course.id" class="card">
+                    <div v-for="course in sortedAndFilteredCourses" :key="course.id" class="card">
                         <figure style="margin-left: 10px;">
                             <img :src="course.image ? getImageUrl(course.id) : 'path/to/default-image.jpg'" :alt="'Image of ' + course.topic" style="width: 175px; height: auto;">
                         </figure>
@@ -142,12 +152,14 @@
                     sortBy: 'topic',
                     order: 'asc',
                     courses: [], // Initially empty, will be populated from backend
+                    filteredCourses: [],
                     cart: [],
                     firstName: '',
                     lastName: '',
                     address: '',
                     phoneNumber: '',
-                    email: ''
+                    email: '',
+                    searchQuery: '',
                 },
                 methods: {
                     fetchCourses() {
@@ -155,10 +167,10 @@
                             .then(response => response.json())
                             .then(data => {
                                 this.courses = data;
+                                this.filteredCourses = data; // Initialize filtered courses with all data
                             })
                             .catch(error => {
                                 console.error('Error fetching courses:', error);
-                                alert('There was an issue fetching course data.');
                             });
                     },
                     getImageUrl(courseId) {
@@ -168,7 +180,7 @@
                         let course = this.courses.find(c => c.id === courseId);
                         if (course && course.spaces > 0) {
                             this.cart.push(course.id);
-                            course.spaces--;  // Decrease the space by 1 in Vue frontend
+                            course.spaces--; // This will automatically reflect in the UI through the computed property
                         }
                     },
                     openCartPage() {
@@ -266,27 +278,45 @@
                                     console.error('Error updating course spaces:', error);
                                 });
                         }
+                    },
+                    fetchFilteredCourses() {
+                        if (this.searchQuery.length > 0) {
+                            fetch(`http://localhost:3000/search?query=${this.searchQuery}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    this.filteredCourses = data;
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching filtered courses:', error);
+                                });
+                        } else {
+                            this.filteredCourses = this.courses; // If no search query, show all courses
+                        }
                     }
                 },
                 computed: {
-                    sortedCourses() {
-                        if (!this.sortBy) return this.courses;
+                    sortedAndFilteredCourses() {
+                        // Step 1: Filter based on the search query
+                        let filtered = this.courses.filter(course => {
+                            return (
+                                course.topic.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                                course.location.toLowerCase().includes(this.searchQuery.toLowerCase())
+                            );
+                        });
 
-                        // Ensure that courses are valid before sorting
-                        return this.courses.slice().sort((courseA, courseB) => {
+                        // Step 2: Sort based on the selected criteria
+                        return filtered.sort((courseA, courseB) => {
                             let comparisonResult = 0;
 
-                            // Ensure courseA and courseB have the required properties
                             if (courseA && courseB) {
                                 if (this.sortBy === 'topic') {
-                                    // Check if the 'topic' property is valid
-                                    comparisonResult = courseA.topic ? courseA.topic.localeCompare(courseB.topic) : 0;
+                                    comparisonResult = courseA.topic.localeCompare(courseB.topic);
                                 } else if (this.sortBy === 'location') {
-                                    comparisonResult = courseA.location ? courseA.location.localeCompare(courseB.location) : 0;
+                                    comparisonResult = courseA.location.localeCompare(courseB.location);
                                 } else if (this.sortBy === 'price') {
-                                    comparisonResult = courseA.price ? courseA.price - courseB.price : 0;
+                                    comparisonResult = courseA.price - courseB.price;
                                 } else if (this.sortBy === 'spaces') {
-                                    comparisonResult = courseA.spaces ? courseA.spaces - courseB.spaces : 0;
+                                    comparisonResult = courseA.spaces - courseB.spaces;
                                 }
                             }
 
