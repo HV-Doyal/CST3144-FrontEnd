@@ -187,7 +187,46 @@
                     },
                     submitOrder() {
                         if (this.isFormValid) {
-                            alert('Order submitted!');
+                            // Prepare the order data from the form and cart
+                            const orderData = {
+                                firstName: this.firstName,
+                                lastName: this.lastName,
+                                address: this.address,
+                                phoneNumber: this.phoneNumber,
+                                email: this.email,
+                                lessons: this.cartSummary.map(lesson => ({
+                                    lessonID: lesson.lessonID,
+                                    spaces: lesson.spaces
+                                }))
+                            };
+
+                            // Send the order data to the server
+                            fetch('http://localhost:3000/saveOrder', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(orderData) // Convert the orderData to JSON
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.message === 'Order created successfully') {
+                                        alert(`Order submitted successfully! Order ID: ${data.orderId}`);
+                                        // Optionally, clear the cart and reset form fields
+                                        this.cart = [];
+                                        this.firstName = '';
+                                        this.lastName = '';
+                                        this.address = '';
+                                        this.phoneNumber = '';
+                                        this.email = '';
+                                    } else {
+                                        alert('Failed to submit order. Please try again.');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error submitting order:', error);
+                                    alert('There was an error submitting your order.');
+                                });
                         } else {
                             alert('Please fill in valid Name and Phone Number.');
                         }
